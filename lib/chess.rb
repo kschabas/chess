@@ -40,13 +40,19 @@ class Chess
 
   def create_pawn(name, color, loc)
     piece = Pawn.new(name, color, loc)
-    @piece_to_loc_hash{ name.to_sym => piece }
+    @piece_to_loc_hash[name.to_sym] = piece
     set_board_loc(loc, piece)
   end
 
   def set_board_loc(alpha_loc, piece)
     row, col = alpha_to_coord(alpha_loc)
     @board[row][col] = piece
+  end
+
+  def alpha_to_coord(alpha_loc)
+    row = alpha_loc[1].to_i - 1
+    col = alpha_loc[0].ord - 'a'.ord
+    return row, col
   end
 
   def clear_board
