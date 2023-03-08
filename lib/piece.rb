@@ -8,7 +8,6 @@ class Piece
     @color = color
     @name = name
   end
-
 end
 
 class Pawn < Piece

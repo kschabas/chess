@@ -49,7 +49,7 @@ describe Chess do
   end
   describe '@create_pawn' do
     subject(:test_game) { described_class.new }
-    let(:test_piece) { double('Piece', name: 'p1W', loc: 'a1')  }
+    let(:test_piece) { double('Piece', name: 'p1W', location: 'a1')  }
 
     before do
       allow(Piece).to receive(:new).and_return(test_piece)
@@ -85,4 +85,73 @@ describe Chess do
       test_game.setup_pawns('B')
     end
   end
-end 
+  describe '#parse_mode' do
+    subject(:test_game) { described_class.new}
+    context 'legal inputs' do
+      it 'works on simple move' do
+        input = 'Qe4'
+        expect(test_game.parse_move(input.downcase)).to eq(['q', false, 'e4', ''])
+      end
+      it 'works on move with file provided' do
+        input = 'Nbc7'
+        expect(test_game.parse_move(input.downcase)).to eq(['n', false, 'c7', 'b'])
+      end
+      it 'works on move with rank provided' do
+        input = 'R1f1'
+        expect(test_game.parse_move(input.downcase)).to eq(['r', false, 'f1', '1'])
+      end
+      it 'works on a capture' do
+        input = 'Pxd4'
+        expect(test_game.parse_move(input.downcase)).to eq(['p', true, 'd4', ''])
+      end
+      it 'works on a capture with a rank provided' do
+        input = 'N3xe2'
+        expect(test_game.parse_move(input.downcase)).to eq(['n', true, 'e2', '3'])
+      end
+    end
+    context 'illegal move provided' do
+      it 'fails if piece provided is wrong' do
+        input = 'Ce3'
+        expect(test_game.parse_move(input.downcase)).to be nil
+      end
+      it 'fails if illegal coordinate provided' do
+        input = 'Bj2'
+        expect(test_game.parse_move(input.downcase)).to be nil
+      end
+      it 'fails if illegal rank provided' do
+        input = 'Bh9'
+        expect(test_game.parse_move(input.downcase)).to be nil
+      end
+      it 'fails if random capture provided' do
+        input = 'Bhx7'
+        expect(test_game.parse_move(input.downcase)).to be nil
+      end
+    end
+  end
+  describe '#setup_board' do
+    subject(:test_game) { described_class.new }
+
+    before do
+      test_game.setup_board
+    end
+
+    it 'pieces hash should have 32 total pieces' do
+      hash = test_game.instance_variable_get(:@piece_to_loc_hash)
+      expect(hash.size).to eq(32)
+    end
+
+    it 'should have 2 black bishops' do
+      hash = test_game.instance_variable_get(:@piece_to_loc_hash)
+      result = hash.select { |name, piece| piece.is_a?(Bishop) && piece.color == 'B'}
+      puts result
+      expect(result.size).to eq(2)
+    end
+
+    it 'should be a white king on e1' do
+      piece = test_game.instance_variable_get(:@board)[0][4]
+      expect(piece.is_a?(King)).to be true
+      expect(piece.color).to eq('W')
+      expect(piece.location).to eq('e1')
+    end
+  end
+end
