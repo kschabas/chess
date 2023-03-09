@@ -1,9 +1,11 @@
 # frozen_string_literal: true
 
 require './lib/piece'
+require './lib/location'
 
 # Main Chess game class
 class Chess
+  include Location
   DIM = 8
   def initialize
     @turn = 'W'
@@ -165,15 +167,33 @@ class Chess
     gets.chomp.downcase
   end
 
+  def get_board_coord(loc)
+    file, rank = loc_to_coord(loc)
+    @board[rank][file]
+  end
+
   def parse_and_execute_user_input(input)
-    save_game if input == 'save'
+    if input == 'save'
+      save_game
+      return false
+    end
 
     result = parse_move(input)
-    return false if result.nil?
+    if result.nil?
+      print_bad_input_error(input)
+      return false
+    end
 
     piece_type, capture, dest_loc, piece_start_loc = result
     start_piece = find_piece(piece_type, capture, dest_loc, piece_start_loc)
-    return false if start_piece.nil?
+    if start_piece.nil?
+      print_no_start_piece_error(input)
+      return false
+    end
+    if start_piee.size > 1
+      print_ambigous_start_piece_error(input)
+      return false
+    end
 
     execute_move(start_piece, dest_loc)
     true
@@ -184,7 +204,7 @@ class Chess
       piece.is_a?(letter_to_type(piece_type)) && piece.loc.include?(piece_start_loc) &&
         piece.color == @turn
     end
-    result = possible_pieces.select { |_key, piece| piece.valid_move?(dest_loc, capture) }
+    result = possible_pieces.select { |_key, piece| piece.valid_move?(dest_loc, capture, @turn) }
     result.size == 1 ? result[0] : nil
   end
 

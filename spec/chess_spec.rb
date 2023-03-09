@@ -143,7 +143,6 @@ describe Chess do
     it 'should have 2 black bishops' do
       hash = test_game.instance_variable_get(:@piece_to_loc_hash)
       result = hash.select { |name, piece| piece.is_a?(Bishop) && piece.color == 'B'}
-      puts result
       expect(result.size).to eq(2)
     end
 
@@ -152,6 +151,33 @@ describe Chess do
       expect(piece.is_a?(King)).to be true
       expect(piece.color).to eq('W')
       expect(piece.location).to eq('e1')
+    end
+  end
+end
+
+describe Pawn do
+  describe '#valid_move?' do
+    subject(:test_piece) { described_class.new('P1', 'W', 'd2') }
+
+    it 'can be moved to d3' do
+      result = test_piece.valid_move?('d3', false, 'W')
+      expect(result).to be true
+    end
+    it 'can be moved to d4' do
+      result = test_piece.valid_move?('d4', false, 'W')
+      expect(result).to be true
+    end
+    it 'cannot be moved to d5' do
+      result = test_piece.valid_move?('d5', false, 'W')
+      expect(result).to be false
+    end
+    it 'can be moved to e3 if capture' do
+      result = test_piece.valid_move?('e3', true, 'W')
+      expect(result).to be true
+    end
+    it 'cannot be moved to e3 if no capture' do
+      result = test_piece.valid_move?('e3', false, 'W')
+      expect(result).to be false
     end
   end
 end
