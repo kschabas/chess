@@ -85,9 +85,16 @@ class Chess
     end
   end
 
-  def add_piece(piece)
-    @piece_to_loc_hash[piece.location.to_sym] = piece
-    set_board_loc(piece.location, piece)
+  def add_piece(piece, location)
+    piece.location = location
+    @piece_to_loc_hash[location.to_sym] = piece
+    @board.add_piece(piece, location)
+  end
+
+  def remove_piece(piece, location)
+    piece.location = nil
+    @piece_to_loc_hash.delete(location.to_sym)
+    @board.remove_piece(piece, location)
   end
 
   def create_pawn(color, loc)
@@ -96,7 +103,7 @@ class Chess
             else
               BlackPawn.new(loc)
             end
-    add_piece(piece)
+    add_piece(piece, loc)
   end
 
   def create_rook(color, loc)
@@ -105,7 +112,7 @@ class Chess
     else
       piece = BlackRook.new(loc)
     end
-    add_piece(piece)
+    add_piece(piece, loc)
   end
 
   def create_knight(color, loc)
@@ -114,7 +121,7 @@ class Chess
     else
       piece = BlackKnight.new(loc)
     end
-    add_piece(piece)
+    add_piece(piece, loc)
   end
 
   def create_bishop(color, loc)
@@ -123,7 +130,7 @@ class Chess
     else
       piece = BlackBishop.new(loc)
     end
-    add_piece(piece)
+    add_piece(piece, loc)
   end
 
   def create_queen(color, loc)
@@ -132,7 +139,7 @@ class Chess
     else
       piece = BlackQueen.new(loc)
     end
-    add_piece(piece)
+    add_piece(piece, loc)
   end
 
   def create_king(color, loc)
@@ -141,12 +148,7 @@ class Chess
     else
       piece = BlackKing.new(loc)
     end
-    add_piece(piece)
-  end
-
-  def set_board_loc(alpha_loc, piece)
-    file, rank = loc_to_coord(alpha_loc)
-    @board.grid[rank][file] = piece
+    add_piece(piece, loc)
   end
 
   def play_game
@@ -193,6 +195,13 @@ class Chess
     return print_ambigous_start_piece_error(input) if start_piece.size > 1
 
     execute_move(start_piece, dest_loc)
+  end
+
+  def execute_move(start_piece, dest_loc)
+    start_loc = start_piece.location
+    remove_piece(dest_loc) unless board.empty?(loc_to_coord(dest_loc))
+    remove_piece(loc_to_coord(start_loc))
+    add_piece(start_piece, dest_loc)
   end
 
   def find_piece(piece_type, capture, dest_loc, piece_start_loc)

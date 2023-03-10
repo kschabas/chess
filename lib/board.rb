@@ -2,6 +2,7 @@
 
 #Board class
 class Board
+  include Location
   DIM = 8
   attr_accessor :grid
   def initialize
@@ -24,5 +25,15 @@ class Board
     return false if @grid[rank][file].nil?
     return false if @grid[rank][file].color == color
     true
+  end
+
+  def add_piece(piece, location)
+    file, rank = loc_to_coord(location)
+    grid[rank][file] = piece
+  end
+
+  def remove_piece(piece, location)
+    file, rank = loc_to_coord(location)
+    grid[rank][file] = nil
   end
 end

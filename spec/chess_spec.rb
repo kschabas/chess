@@ -34,11 +34,11 @@ describe Chess do
   #     expect(result).to eq([7, 7])
   #   end
   # end
-  describe 'set_board_loc' do
+  describe 'add_piece' do
     subject(:test_game) { described_class.new }
-    let(:test_piece) { double('Piece') }
+    let(:test_piece) { WhitePawn.new(nil) }
     before do
-      test_game.set_board_loc('a1', test_piece)
+      test_game.add_piece(test_piece, 'a1')
     end
     it 'assigns to a1 correctly' do
       expect(test_game.instance_variable_get(:@board).grid[0][0]).to eq(test_piece)
@@ -49,14 +49,14 @@ describe Chess do
   end
   describe '@create_pawn' do
     subject(:test_game) { described_class.new }
-    let(:test_piece) { double('Piece', name: 'p1W', location: 'a1')  }
+    let(:test_piece) { WhitePawn.new(nil) }
 
     before do
       allow(Piece).to receive(:new).and_return(test_piece)
     end
 
     it 'calls set_board_loc correctly' do
-      expect(test_game).to receive(:set_board_loc).with('a1',test_piece).once
+      expect(test_game).to receive(:add_piece).with(test_piece, 'a1').once
       test_game.create_pawn('W', 'a1')
     end
 
@@ -86,7 +86,7 @@ describe Chess do
     end
   end
   describe '#parse_mode' do
-    subject(:test_game) { described_class.new}
+    subject(:test_game) { described_class.new }
     context 'legal inputs' do
       it 'works on simple move' do
         input = 'Qe4'
@@ -176,9 +176,19 @@ describe WhitePawn do
       result = test_piece.valid_move?('d5', false, board)
       expect(result).to be false
     end
-    xit 'can be moved to e3 if capture' do
+    it 'can be moved to e3 if capture and enemy piece present' do
+      test_game.add_piece(BlackPawn.new(nil), 'e3')
       result = test_piece.valid_move?('e3', true, board)
       expect(result).to be true
+    end
+    it 'cannot be moved to e3 if friendly piece present' do
+      test_game.add_piece(WhitePawn.new(nil), 'e3')
+      result = test_piece.valid_move?('e3', true, board)
+      expect(result).to be false
+    end
+    it 'cannot be moved to e3 if no piece present' do
+      result = test_piece.valid_move?('e3', true, board)
+      expect(result).to be false
     end
     it 'cannot be moved to e3 if no capture' do
       result = test_piece.valid_move?('e3', false, board)
