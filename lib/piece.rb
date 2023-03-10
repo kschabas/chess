@@ -21,62 +21,39 @@ class Piece
 
   def diagonal_moves(board)
     result = []
-    result.concat(diagonal_up_left_moves(board), diagonal_up_right_moves(board), diagonal_down_left_moves(board), diagonal_down_right_moves(board))
+    result.concat(diagonal_path_move(-1, 1, board), diagonal_path_move(1, 1, board), diagonal_path_move(-1, -1, board), diagonal_path_move(1, -1, board))
   end
 
-  def diagonal_up_left_moves(board)
+  def diagonal_path_move(file_move, rank_move, board)
     result = []
     file, rank = loc_to_coord(@location)
-    file -= 1
-    rank += 1
-    while board.legal?(file, rank) && board.empty?(file, rank)
+    file += file_move
+    rank += rank_move
+    while board.valid_square?(file, rank) && board.empty?(file, rank)
       result << coord_to_loc(file, rank)
-      file -= 1
-      rank += 1
-    end
-    result
-  end
-
-  def diagonal_up_right_moves(board)
-    result = []
-    file, rank = loc_to_coord(@location)
-    file += 1
-    rank += 1
-    while board.legal?(file, rank) && board.empty?(file, rank)
-      result << coord_to_loc(file, rank)
-      file += 1
-      rank += 1
-    end
-    result
-  end
-
-  def diagonal_down_left_moves(board)
-    result = []
-    file, rank = loc_to_coord(@location)
-    file -= 1
-    rank -= 1
-    while board.legal?(file, rank) && board.empty?(file, rank)
-      result << coord_to_loc(file, rank)
-      file -= 1
-      rank -= 1
-    end
-    result
-  end
-
-  def diagonal_down_right_moves(board)
-    result = []
-    file, rank = loc_to_coord(@location)
-    file += 1
-    rank -= 1
-    while board.legal?(file, rank) && board.empty?(file, rank)
-      result << coord_to_loc(file, rank)
-      file += 1
-      rank -= 1
+      file += file_move
+      rank += rank_move
     end
     result
   end
 
   def diagonal_captures(board)
+    result = []
+    result.concat(diagonal_path_capture(-1, 1, board), diagonal_path_capture(1, 1, board), diagonal_path_capture(-1, -1, board), diagonal_path_capture(1, -1, board))
+  end
+
+  def diagonal_path_capture(file_move, rank_move, board)
+    file, rank = loc_to_coord(@location)
+    file += file_move
+    rank += rank_move
+    while board.valid_square?(file, rank)
+      return [coord_to_loc(file, rank)] if board.enemy_piece?(file, rank, @color)
+      break unless board.empty?(file, rank)
+
+      file += file_move
+      rank += rank_move
+    end
+    []
   end
 end
 

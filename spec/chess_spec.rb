@@ -195,4 +195,74 @@ describe WhitePawn do
       expect(result).to be false
     end
   end
+
+  describe BlackKnight do
+    describe '#valid_move?' do
+      subject(:test_piece) { BlackKnight.new('b8') }
+      let(:test_board) { Board.new }
+
+      before do
+        test_board.add_piece(test_piece, 'b8')
+        test_board.add_piece(WhiteQueen.new('a6'), 'a6')
+        test_board.add_piece(BlackPawn.new('d7'), 'd7')
+      end
+
+      it 'will move to an empty space' do
+        result = test_piece.valid_move?('c6', false, test_board)
+        expect(result).to be true
+      end
+      it 'will not move to an empty space if capture set' do
+        result = test_piece.valid_move?('c6', true, test_board)
+        expect(result).to be false
+      end
+      it 'will capture an enemy piece' do
+        result = test_piece.valid_move?('a6', true, test_board)
+        expect(result).to be true
+      end
+      it 'will not capture an enemy piece if capture not set' do
+        result = test_piece.valid_move?('a6', false, test_board)
+        expect(result).to be false
+      end
+      it 'will not capture a friendly piece' do
+        result = test_piece.valid_move?('d7', true, test_board)
+        expect(result).to be false
+      end
+    end
+  end
+  describe WhiteBishop do
+    subject(:test_piece) { WhiteBishop.new('e4') }
+    let(:test_board) { Board.new }
+
+    before do
+      test_board.add_piece(test_piece, 'e4')
+      test_board.add_piece(WhiteKing.new('c6'), 'c6')
+      test_board.add_piece(BlackRook.new('g6'), 'g6')
+      test_board.add_piece(BlackBishop.new('b1'), 'b1')
+    end
+
+    it 'will move to open diagonal' do
+      result = test_piece.valid_move?('h1', false, test_board)
+      expect(result).to be true
+    end
+    it 'will not move past an obstruction' do
+      result = test_piece.valid_move?('b7', false, test_board)
+      expect(result).to be false
+    end
+    it 'will not move onto its own piece' do
+      result = test_piece.valid_move?('c6', false, test_board)
+      expect(result).to be false
+    end
+    it 'will capture an enemy piece' do
+      result = test_piece.valid_move?('g6', true, test_board)
+      expect(result).to be true
+    end
+    it 'will capture an edge piece' do
+      result = test_piece.valid_move?('b1', true, test_board)
+      expect(result).to be true
+    end
+    it 'will not move to a random spot' do
+      result = test_piece.valid_move?('d6', false, test_board)
+      expect(result).to be false
+    end
+  end
 end
