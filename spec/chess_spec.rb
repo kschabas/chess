@@ -176,6 +176,36 @@ describe Chess do
       expect(result).to be false
     end
   end
+  describe 'check?' do
+    subject(:test_game) { described_class.new }
+    let(:test_board) { test_game.instance_variable_get(:@board) }
+    let(:test_knight) { WhiteKnight.new('d6') }
+    let(:test_bishop) { WhiteBishop.new('e2') }
+
+    before do
+      test_game.instance_variable_set(:@turn, 'W')
+      test_game.add_piece(BlackKing.new('e8'), 'e8')
+      test_game.add_piece(WhiteRook.new('e1'), 'e1')
+      test_game.add_piece(test_bishop, 'e2')
+      test_game.add_piece(test_knight, 'd6')
+    end
+
+    it 'should be a check' do
+      result = test_game.check?
+      expect(result).to be true
+    end
+    it 'should not be a check if knight moves' do
+      test_game.execute_move(test_knight, 'b5', false)
+      result = test_game.check?
+      expect(result).to be false
+    end
+    it 'should be a check if knight and bishop move' do
+      test_game.execute_move(test_knight, 'b5', false)
+      test_game.execute_move(test_bishop, 'd3', false)
+      result = test_game.check?
+      expect(result).to be true
+    end
+  end
 end
 
 describe WhitePawn do

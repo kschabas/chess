@@ -156,10 +156,8 @@ class Chess
     setup_board
     loop do
       move = user_input
-      until parse_and_execute_user_input(move) == true
-        print_input_error_message(move)
-        move = user_input
-      end
+      move = user_input until parse_and_execute_user_input(move) == true
+
       print_board
       break if checkmate?
 
@@ -167,6 +165,13 @@ class Chess
       change_turn
     end
     print_winner_message
+  end
+
+  def check?
+    enemy_king = @piece_to_loc_hash.reject { |_key, piece| piece.color == @turn || !piece.is_a?(King) }
+    enemy_king_loc = enemy_king.keys[0].to_s
+    possible_king_attackers = @piece_to_loc_hash.select { |_key, piece| piece.color == @turn && piece.valid_move?(enemy_king_loc, true, @board)}
+    possible_king_attackers.size.positive? ? true : false
   end
 
   def change_turn
@@ -206,6 +211,7 @@ class Chess
     remove_piece(start_piece.location)
     start_piece.location = dest_loc
     add_piece(start_piece, dest_loc)
+    true
   end
 
   def exposes_king?(start_piece, dest_loc, capture)
