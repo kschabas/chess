@@ -32,7 +32,7 @@ class Board
     grid[rank][file] = piece
   end
 
-  def remove_piece(piece, location)
+  def remove_piece(location)
     file, rank = loc_to_coord(location)
     grid[rank][file] = nil
   end

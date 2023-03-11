@@ -21,10 +21,15 @@ class Piece
 
   def diagonal_moves(board)
     result = []
-    result.concat(diagonal_path_move(-1, 1, board), diagonal_path_move(1, 1, board), diagonal_path_move(-1, -1, board), diagonal_path_move(1, -1, board))
+    result.concat(path_move(-1, 1, board), path_move(1, 1, board), path_move(-1, -1, board), path_move(1, -1, board))
   end
 
-  def diagonal_path_move(file_move, rank_move, board)
+  def straight_moves(board)
+    result = []
+    result.concat(path_move(1, 0, board), path_move(-1, 0, board), path_move(0, 1, board), path_move(0, -1, board))
+  end
+
+  def path_move(file_move, rank_move, board)
     result = []
     file, rank = loc_to_coord(@location)
     file += file_move
@@ -39,10 +44,15 @@ class Piece
 
   def diagonal_captures(board)
     result = []
-    result.concat(diagonal_path_capture(-1, 1, board), diagonal_path_capture(1, 1, board), diagonal_path_capture(-1, -1, board), diagonal_path_capture(1, -1, board))
+    result.concat(path_capture(-1, 1, board), path_capture(1, 1, board), path_capture(-1, -1, board), path_capture(1, -1, board))
   end
 
-  def diagonal_path_capture(file_move, rank_move, board)
+  def straight_captures(board)
+    result = []
+    result.concat(path_capture(1, 0, board), path_capture(-1, 0, board), path_capture(0, 1, board), path_capture(0, -1, board))
+  end
+
+  def path_capture(file_move, rank_move, board)
     file, rank = loc_to_coord(@location)
     file += file_move
     rank += rank_move
@@ -150,6 +160,7 @@ class Bishop < Piece
   def possible_moves(board)
     diagonal_moves(board)
   end
+
   def possible_captures(board)
     diagonal_captures(board)
   end
@@ -169,56 +180,93 @@ class BlackBishop < Bishop
   end
 end
 
-class WhiteRook < Piece
+class Rook < Piece
+  def possible_moves(board)
+    straight_moves(board)
+  end
+  def possible_captures(board)
+    straight_captures(board)
+  end
+end
+
+class WhiteRook < Rook
   def initialize(location)
     super
     @color = 'W'
   end
-  def valid_move?(dest_loc, capture, board)
-  end
 end
 
-class BlackRook < Piece
+class BlackRook < Rook
   def initialize(location)
     super
     @color = 'B'
   end
-  def valid_move?(dest_loc, capture, board)
+end
+
+class Queen < Piece
+  def possible_moves(board)
+    diagonal_moves(board).concat(straight_moves(board))
+  end
+
+  def possible_captures(board)
+    diagonal_captures(board).concat(straight_captures(board))
   end
 end
 
-class WhiteQueen < Piece
+class WhiteQueen < Queen
   def initialize(location)
     super
     @color = 'W'
   end
-  def valid_move?(dest_loc, capture, board)
-  end
 end
 
-class BlackQueen < Piece
+class BlackQueen < Queen
   def initialize(location)
     super
     @color = 'B'
   end
-  def valid_move?(dest_loc, capture, board)
+end
+
+class King < Piece
+  def possible_moves(board)
+    file, rank = loc_to_coord(@location)
+    result = []
+    result << coord_to_loc(file + 1, rank) if board.empty?(file + 1, rank)
+    result << coord_to_loc(file + 1, rank - 1) if board.empty?(file + 1, rank - 1)
+    result << coord_to_loc(file, rank - 1) if board.empty?(file, rank - 1)
+    result << coord_to_loc(file - 1, rank - 1) if board.empty?(file - 1, rank - 1)
+    result << coord_to_loc(file - 1, rank) if board.empty?(file - 1, rank)
+    result << coord_to_loc(file - 1, rank + 1) if board.empty?(file - 1, rank + 1)
+    result << coord_to_loc(file, rank + 1) if board.empty?(file, rank + 1)
+    result << coord_to_loc(file + 1, rank + 1) if board.empty?(file + 1, rank + 1)
+    result
+  end
+
+  def possible_captures(board)
+    file, rank = loc_to_coord(@location)
+    result = []
+    result << coord_to_loc(file + 1, rank) if board.enemy_piece?(file + 1, rank, @color)
+    result << coord_to_loc(file + 1, rank - 1) if board.enemy_piece?(file + 1, rank - 1, @color)
+    result << coord_to_loc(file, rank - 1) if board.enemy_piece?(file, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank - 1) if board.enemy_piece?(file - 1, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank) if board.enemy_piece?(file - 1, rank, @color)
+    result << coord_to_loc(file - 1, rank + 1) if board.enemy_piece?(file - 1, rank + 1, @color)
+    result << coord_to_loc(file, rank + 1) if board.enemy_piece?(file, rank + 1, @color)
+    result << coord_to_loc(file + 1, rank + 1) if board.enemy_piece?(file + 1, rank + 1, @color)
+    result
   end
 end
 
-class WhiteKing < Piece
+class WhiteKing < King
   def initialize(location)
     super
     @color = 'W'
   end
-  def valid_move?(dest_loc, capture, board)
-  end
 end
 
-class BlackKing < Piece
+class BlackKing < King
   def initialize(location)
     super
     @color = 'B'
-  end
-  def valid_move?(dest_loc, capture, board)
   end
 end

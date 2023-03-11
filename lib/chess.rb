@@ -91,10 +91,11 @@ class Chess
     @board.add_piece(piece, location)
   end
 
-  def remove_piece(piece, location)
+  def remove_piece(location)
+    piece = @piece_to_loc_hash[location.to_sym]
     piece.location = nil
     @piece_to_loc_hash.delete(location.to_sym)
-    @board.remove_piece(piece, location)
+    @board.remove_piece(location)
   end
 
   def create_pawn(color, loc)
@@ -194,21 +195,50 @@ class Chess
 
     return print_ambigous_start_piece_error(input) if start_piece.size > 1
 
-    execute_move(start_piece, dest_loc)
+    return print_exposes_king_error(input) if exposes_king?(start_piece, dest_loc, capture)
+
+    execute_move(start_piece, dest_loc, capture)
   end
 
-  def execute_move(start_piece, dest_loc)
-    start_loc = start_piece.location
-    remove_piece(dest_loc) unless board.empty?(loc_to_coord(dest_loc))
-    remove_piece(loc_to_coord(start_loc))
+  def execute_move(start_piece, dest_loc, capture)
+    remove_piece(dest_loc) if capture
+
+    remove_piece(start_piece.location)
+    start_piece.location = dest_loc
     add_piece(start_piece, dest_loc)
+  end
+
+  def exposes_king?(start_piece, dest_loc, capture)
+    dest_file, dest_rank = loc_to_coord(dest_loc)
+    saved_piece = @board.grid[dest_file][dest_rank] if capture
+    start_loc = start_piece.location
+    king_piece = @piece_to_loc_hash.select { |_key, piece| piece.color == start_piece.color && piece.is_a?(King) }
+    king_piece = king_piece.values[0]
+
+    execute_move(start_piece, dest_loc, capture)
+    test_for_check = @piece_to_loc_hash.reject { |_key, piece| piece.color == start_piece.color }
+    if test_for_check.any? { |_key, piece| piece.valid_move?(king_piece.location, true, @board) }
+      undo_move(start_piece, start_loc, dest_loc, saved_piece, capture)
+      return true
+    end
+    undo_move(start_piece, start_loc, dest_loc, saved_piece, capture)
+    false
+  end
+
+  def undo_move(start_piece, start_loc, dest_loc, saved_piece, capture)
+    remove_piece(dest_loc)
+    if capture
+      saved_piece.location = dest_loc
+      add_piece(saved_piece, dest_loc)
+    end
+    add_piece(start_piece, start_loc)
   end
 
   def find_piece(piece_type, capture, dest_loc, piece_start_loc)
     possible_pieces = @piece_to_loc_hash.select do |_key, piece|
       piece.is_a?(letter_to_type(piece_type, @turn)) && piece.loc.include?(piece_start_loc)
     end
-    result = possible_pieces.select { |_key, piece| piece.valid_move?(dest_loc, capture, @turn, @board) }
+    result = possible_pieces.select { |_key, piece| piece.valid_move?(dest_loc, capture, @board) }
     result.size == 1 ? result[0] : nil
   end
 

@@ -153,6 +153,29 @@ describe Chess do
       expect(piece.location).to eq('e1')
     end
   end
+  describe '#exposes_king?' do
+    subject(:test_game) { described_class.new }
+    let(:test_piece) { WhiteQueen.new('e2') }
+
+    before do
+      test_game.add_piece(WhiteKing.new('e1'), 'e1')
+      test_game.add_piece(test_piece, 'e2')
+      test_game.add_piece(BlackRook.new('e8'), 'e8')
+    end
+
+    it 'is a valid move to move queen away' do
+      result = test_piece.valid_move?('d2', false, test_game.instance_variable_get(:@board))
+      expect(result).to be true
+    end
+    it 'will be flagged by expose_king?' do
+      result = test_game.exposes_king?(test_piece, 'd2', false)
+      expect(result).to be true
+    end
+    it 'will not be flagged by expose_king? if we keep on same file' do
+      result = test_game.exposes_king?(test_piece, 'e3', false)
+      expect(result).to be false
+    end
+  end
 end
 
 describe WhitePawn do
@@ -263,6 +286,68 @@ describe WhitePawn do
     it 'will not move to a random spot' do
       result = test_piece.valid_move?('d6', false, test_board)
       expect(result).to be false
+    end
+  end
+  describe BlackRook do
+    subject(:test_piece) { described_class.new('b8') }
+    let(:test_board) { Board.new }
+
+    before do
+      test_board.add_piece(test_piece, 'b8')
+      test_board.add_piece(WhiteRook.new('b2'), 'b2')
+      test_board.add_piece(BlackKing.new('e8'), 'e8')
+      test_board.add_piece(WhitePawn.new('e5'), 'e5')
+    end
+    it 'moves down the board' do
+      result = test_piece.valid_move?('b3', false, test_board)
+      expect(result).to be true
+    end
+    it 'wont move past a piece' do
+      result = test_piece.valid_move?('h8', false, test_board)
+      expect(result).to be false
+    end
+    it 'will capture an enemy piece' do
+      result = test_piece.valid_move?('b2', true, test_board)
+      expect(result).to be true
+    end
+    it 'wont move diagonally' do
+      result = test_piece.valid_move?('d6', false, test_board)
+      expect(result).to be false
+    end
+    it 'wont capture diagonally' do
+      result = test_piece.valid_move?('e5', true, test_board)
+      expect(result).to be false
+    end
+  end
+  describe BlackQueen do
+    subject(:test_piece) { described_class.new('b8') }
+    let(:test_board) { Board.new }
+
+    before do
+      test_board.add_piece(test_piece, 'b8')
+      test_board.add_piece(WhiteRook.new('b2'), 'b2')
+      test_board.add_piece(BlackKing.new('e8'), 'e8')
+      test_board.add_piece(WhitePawn.new('e5'), 'e5')
+    end
+    it 'moves down the board' do
+      result = test_piece.valid_move?('b3', false, test_board)
+      expect(result).to be true
+    end
+    it 'wont move past a piece' do
+      result = test_piece.valid_move?('h8', false, test_board)
+      expect(result).to be false
+    end
+    it 'will capture an enemy piece' do
+      result = test_piece.valid_move?('b2', true, test_board)
+      expect(result).to be true
+    end
+    it 'will move diagonally' do
+      result = test_piece.valid_move?('d6', false, test_board)
+      expect(result).to be true
+    end
+    it 'will capture diagonally' do
+      result = test_piece.valid_move?('e5', true, test_board)
+      expect(result).to be true
     end
   end
 end
