@@ -76,7 +76,7 @@ class WhitePawn < Piece
   def possible_moves(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file, rank + 1) if board.valid_square?(file, rank + 1) && board.empty?(file, rank + 1)
+    result << coord_to_loc(file, rank + 1) if board.valid_and_empty?(file, rank + 1)
     result << coord_to_loc(file, rank + 2) if rank == 1 && board.empty?(file, rank + 1) && board.empty?(file, rank + 2)
     result
   end
@@ -84,8 +84,8 @@ class WhitePawn < Piece
   def possible_captures(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file - 1, rank + 1) if board.valid_square?(file - 1, rank + 1) && board.enemy_piece?(file - 1, rank + 1, @color)
-    result << coord_to_loc(file + 1, rank + 1) if board.valid_square?(file + 1, rank + 1) && board.enemy_piece?(file + 1, rank + 1, @color)
+    result << coord_to_loc(file - 1, rank + 1) if board.valid_and_enemy?(file - 1, rank + 1, @color)
+    result << coord_to_loc(file + 1, rank + 1) if board.valid_and_enemy?(file + 1, rank + 1, @color)
     result
   end
 end
@@ -98,7 +98,7 @@ class BlackPawn < Piece
   def possible_moves(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file, rank - 1) if board.valid_square?(file, rank - 1) && board.empty?(file, rank - 1)
+    result << coord_to_loc(file, rank - 1) if board.valid_and_empty?(file, rank - 1)
     result << coord_to_loc(file, rank - 2) if rank == 1 && board.empty?(file, rank - 1) && board.empty?(file, rank - 2)
     result
   end
@@ -106,8 +106,8 @@ class BlackPawn < Piece
   def possible_captures(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file - 1, rank - 1) if board.valid_square?(file - 1, rank + 1) && board.enemy_piece?(file - 1, rank - 1, @color)
-    result << coord_to_loc(file + 1, rank - 1) if board.valid_square?(file + 1, rank + 1) && board.enemy_piece?(file + 1, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank - 1) if board.valid_and_enemy?(file - 1, rank - 1, @color)
+    result << coord_to_loc(file + 1, rank - 1) if board.valid_and_enemy?(file + 1, rank - 1, @color)
     result
   end
 end
@@ -116,28 +116,28 @@ class Knight < Piece
   def possible_moves(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file + 1, rank + 2) if board.valid_square?(file + 1, rank + 2) && board.empty?(file + 1, rank + 2)
-    result << coord_to_loc(file + 1, rank - 2) if board.valid_square?(file + 1, rank - 2) && board.empty?(file + 1, rank - 2)
-    result << coord_to_loc(file + 2, rank + 1) if board.valid_square?(file + 2, rank + 1) && board.empty?(file + 2, rank + 1)
-    result << coord_to_loc(file + 2, rank - 1) if board.valid_square?(file + 2, rank - 1) && board.empty?(file + 2, rank - 1)
-    result << coord_to_loc(file - 1, rank + 2) if board.valid_square?(file - 1, rank + 2) && board.empty?(file - 1, rank + 2)
-    result << coord_to_loc(file - 1, rank - 2) if board.valid_square?(file - 1, rank - 2) && board.empty?(file - 1, rank - 2)
-    result << coord_to_loc(file - 2, rank + 1) if board.valid_square?(file - 2, rank + 1) && board.empty?(file - 2, rank + 1)
-    result << coord_to_loc(file - 2, rank - 1) if board.valid_square?(file - 2, rank - 1) && board.empty?(file - 2, rank - 1)
+    result << coord_to_loc(file + 1, rank + 2) if board.valid_and_empty?(file + 1, rank + 2)
+    result << coord_to_loc(file + 1, rank - 2) if board.valid_and_empty?(file + 1, rank - 2)
+    result << coord_to_loc(file + 2, rank + 1) if board.valid_and_empty?(file + 2, rank + 1)
+    result << coord_to_loc(file + 2, rank - 1) if board.valid_and_empty?(file + 2, rank - 1)
+    result << coord_to_loc(file - 1, rank + 2) if board.valid_and_empty?(file - 1, rank + 2)
+    result << coord_to_loc(file - 1, rank - 2) if board.valid_and_empty?(file - 1, rank - 2)
+    result << coord_to_loc(file - 2, rank + 1) if board.valid_and_empty?(file - 2, rank + 1)
+    result << coord_to_loc(file - 2, rank - 1) if board.valid_and_empty?(file - 2, rank - 1)
     result
   end
 
   def possible_captures(board)
     result = []
     file, rank = loc_to_coord(@location)
-    result << coord_to_loc(file + 1, rank + 2) if board.valid_square?(file + 1, rank + 2) && board.enemy_piece?(file + 1, rank + 2, @color)
-    result << coord_to_loc(file + 1, rank - 2) if board.valid_square?(file + 1, rank - 2) && board.enemy_piece?(file + 1, rank - 2, @color)
-    result << coord_to_loc(file + 2, rank + 1) if board.valid_square?(file + 2, rank + 1) && board.enemy_piece?(file + 2, rank + 1, @color)
-    result << coord_to_loc(file + 2, rank - 1) if board.valid_square?(file + 2, rank - 1) && board.enemy_piece?(file + 2, rank - 1, @color)
-    result << coord_to_loc(file - 1, rank + 2) if board.valid_square?(file - 1, rank + 2) && board.enemy_piece?(file - 1, rank + 2, @color)
-    result << coord_to_loc(file - 1, rank - 2) if board.valid_square?(file - 1, rank - 2) && board.enemy_piece?(file - 1, rank - 2, @color)
-    result << coord_to_loc(file - 2, rank + 1) if board.valid_square?(file - 2, rank + 1) && board.enemy_piece?(file - 2, rank + 1, @color)
-    result << coord_to_loc(file - 2, rank - 1) if board.valid_square?(file - 2, rank - 1) && board.enemy_piece?(file - 2, rank - 1, @color)
+    result << coord_to_loc(file + 1, rank + 2) if board.valid_and_enemy?(file + 1, rank + 2, @color)
+    result << coord_to_loc(file + 1, rank - 2) if board.valid_and_enemy?(file + 1, rank - 2, @color)
+    result << coord_to_loc(file + 2, rank + 1) if board.valid_and_enemy?(file + 2, rank + 1, @color)
+    result << coord_to_loc(file + 2, rank - 1) if board.valid_and_enemy?(file + 2, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank + 2) if board.valid_and_enemy?(file - 1, rank + 2, @color)
+    result << coord_to_loc(file - 1, rank - 2) if board.valid_and_enemy?(file - 1, rank - 2, @color)
+    result << coord_to_loc(file - 2, rank + 1) if board.valid_and_enemy?(file - 2, rank + 1, @color)
+    result << coord_to_loc(file - 2, rank - 1) if board.valid_and_enemy?(file - 2, rank - 1, @color)
     result
   end
 end
@@ -231,28 +231,28 @@ class King < Piece
   def possible_moves(board)
     file, rank = loc_to_coord(@location)
     result = []
-    result << coord_to_loc(file + 1, rank) if board.empty?(file + 1, rank)
-    result << coord_to_loc(file + 1, rank - 1) if board.empty?(file + 1, rank - 1)
-    result << coord_to_loc(file, rank - 1) if board.empty?(file, rank - 1)
-    result << coord_to_loc(file - 1, rank - 1) if board.empty?(file - 1, rank - 1)
-    result << coord_to_loc(file - 1, rank) if board.empty?(file - 1, rank)
-    result << coord_to_loc(file - 1, rank + 1) if board.empty?(file - 1, rank + 1)
-    result << coord_to_loc(file, rank + 1) if board.empty?(file, rank + 1)
-    result << coord_to_loc(file + 1, rank + 1) if board.empty?(file + 1, rank + 1)
+    result << coord_to_loc(file + 1, rank) if board.valid_and_empty?(file + 1, rank)
+    result << coord_to_loc(file + 1, rank - 1) if board.valid_and_empty?(file + 1, rank - 1)
+    result << coord_to_loc(file, rank - 1) if board.valid_and_empty?(file, rank - 1)
+    result << coord_to_loc(file - 1, rank - 1) if board.valid_and_empty?(file - 1, rank - 1)
+    result << coord_to_loc(file - 1, rank) if board.valid_and_empty?(file - 1, rank)
+    result << coord_to_loc(file - 1, rank + 1) if board.valid_and_empty?(file - 1, rank + 1)
+    result << coord_to_loc(file, rank + 1) if board.valid_and_empty?(file, rank + 1)
+    result << coord_to_loc(file + 1, rank + 1) if board.valid_and_empty?(file + 1, rank + 1)
     result
   end
 
   def possible_captures(board)
     file, rank = loc_to_coord(@location)
     result = []
-    result << coord_to_loc(file + 1, rank) if board.enemy_piece?(file + 1, rank, @color)
-    result << coord_to_loc(file + 1, rank - 1) if board.enemy_piece?(file + 1, rank - 1, @color)
-    result << coord_to_loc(file, rank - 1) if board.enemy_piece?(file, rank - 1, @color)
-    result << coord_to_loc(file - 1, rank - 1) if board.enemy_piece?(file - 1, rank - 1, @color)
-    result << coord_to_loc(file - 1, rank) if board.enemy_piece?(file - 1, rank, @color)
-    result << coord_to_loc(file - 1, rank + 1) if board.enemy_piece?(file - 1, rank + 1, @color)
-    result << coord_to_loc(file, rank + 1) if board.enemy_piece?(file, rank + 1, @color)
-    result << coord_to_loc(file + 1, rank + 1) if board.enemy_piece?(file + 1, rank + 1, @color)
+    result << coord_to_loc(file + 1, rank) if board.valid_and_enemy?(file + 1, rank, @color)
+    result << coord_to_loc(file + 1, rank - 1) if board.valid_and_enemy?(file + 1, rank - 1, @color)
+    result << coord_to_loc(file, rank - 1) if board.valid_and_enemy?(file, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank - 1) if board.valid_and_enemy?(file - 1, rank - 1, @color)
+    result << coord_to_loc(file - 1, rank) if board.valid_and_enemy?(file - 1, rank, @color)
+    result << coord_to_loc(file - 1, rank + 1) if board.valid_and_enemy?(file - 1, rank + 1, @color)
+    result << coord_to_loc(file, rank + 1) if board.valid_and_enemy?(file, rank + 1, @color)
+    result << coord_to_loc(file + 1, rank + 1) if board.valid_and_enemy?(file + 1, rank + 1, @color)
     result
   end
 end

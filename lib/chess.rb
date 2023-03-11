@@ -98,6 +98,10 @@ class Chess
     @board.remove_piece(location)
   end
 
+  def get_piece_from_loc(loc)
+    @piece_to_loc_hash[loc.to_sym]
+  end
+
   def create_pawn(color, loc)
     piece = if color == 'W'
               WhitePawn.new(loc)
@@ -159,7 +163,7 @@ class Chess
       move = user_input until parse_and_execute_user_input(move) == true
 
       print_board
-      break if checkmate?
+      break if checkmate? || stalemate?
 
       print_check if check?
       change_turn
@@ -167,11 +171,40 @@ class Chess
     print_winner_message
   end
 
+  def stalemate?
+    false
+  end
+
   def check?
     enemy_king = @piece_to_loc_hash.reject { |_key, piece| piece.color == @turn || !piece.is_a?(King) }
     enemy_king_loc = enemy_king.keys[0].to_s
     possible_king_attackers = @piece_to_loc_hash.select { |_key, piece| piece.color == @turn && piece.valid_move?(enemy_king_loc, true, @board)}
     possible_king_attackers.size.positive? ? true : false
+  end
+
+  def checkmate?
+    return false unless check?
+
+    enemy_pieces = @piece_to_loc_hash.reject { |_key, piece| piece.color == @turn }
+    enemy_pieces.each_value do |piece|
+      start_loc = piece.location
+      possible_moves = piece.possible_moves(@board)
+      possible_captures = piece.possible_captures(@board)
+      possible_moves.each do |loc|
+        execute_move(piece, loc, false)
+        result = check?
+        undo_move(piece, start_loc, loc, nil, false)
+        return false unless result
+      end
+      possible_captures.each do |loc|
+        saved_piece = @piece_to_loc_hash[loc.to_sym]
+        execute_move(piece, loc, true)
+        result = check?
+        undo_move(piece, start_loc, loc, saved_piece, true)
+        return false unless result
+      end
+    end
+    true
   end
 
   def change_turn

@@ -21,6 +21,14 @@ class Board
     return file.between?(0, DIM - 1) && rank.between?(0, DIM - 1)
   end
 
+  def valid_and_empty?(file, rank)
+    valid_square?(file, rank) && empty?(file, rank)
+  end
+
+  def valid_and_enemy?(file, rank, color)
+    valid_square?(file, rank) && enemy_piece?(file, rank, color)
+  end
+
   def enemy_piece?(file, rank, color)
     return false if @grid[rank][file].nil?
     return false if @grid[rank][file].color == color

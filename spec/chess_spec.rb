@@ -206,6 +206,40 @@ describe Chess do
       expect(result).to be true
     end
   end
+  describe 'checkmate?' do
+    subject(:test_game) { described_class.new }
+
+    context 'arbitrary board with checkmate' do
+      before do
+        test_game.instance_variable_set(:@turn, 'W')
+        test_game.add_piece(BlackKing.new('a8'), 'a8')
+        test_game.add_piece(WhiteQueen.new('a7'), 'a7')
+        test_game.add_piece(WhiteKing.new('b6'), 'b6')
+      end
+
+      it 'should be a checkmate' do
+        result = test_game.checkmate?
+        expect(result).to be true
+      end
+      it 'should not be a checkmate if we move the queen' do
+        test_game.execute_move(test_game.get_piece_from_loc('a7'), 'a3', false)
+        result = test_game.checkmate?
+        expect(result).to be false
+      end
+    end
+    context 'checkmate from a start position' do
+      it 'finds the checkmate' do
+        test_game.setup_board
+        test_game.instance_variable_set(:@turn, 'B')
+        test_game.execute_move(test_game.get_piece_from_loc('f2'), 'f3', false)
+        test_game.execute_move(test_game.get_piece_from_loc('e7'), 'e5', false)
+        test_game.execute_move(test_game.get_piece_from_loc('g2'), 'g4', false)
+        test_game.execute_move(test_game.get_piece_from_loc('d8'), 'h4', false)
+        result = test_game.checkmate?
+        expect(result).to be true
+      end
+    end
+  end
 end
 
 describe WhitePawn do
