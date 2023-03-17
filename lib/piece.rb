@@ -5,7 +5,7 @@ require './lib/location'
 # class to implement chess pieces
 class Piece
   include Location
-  attr_accessor :location, :color, :name
+  attr_accessor :location, :color, :name, :ucode
 
   def initialize(location)
     @location = location
@@ -71,6 +71,7 @@ class WhitePawn < Piece
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2659"
   end
 
   def possible_moves(board)
@@ -94,12 +95,14 @@ class BlackPawn < Piece
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265F"
   end
+
   def possible_moves(board)
     result = []
     file, rank = loc_to_coord(@location)
     result << coord_to_loc(file, rank - 1) if board.valid_and_empty?(file, rank - 1)
-    result << coord_to_loc(file, rank - 2) if rank == 1 && board.empty?(file, rank - 1) && board.empty?(file, rank - 2)
+    result << coord_to_loc(file, rank - 2) if rank == 6 && board.empty?(file, rank - 1) && board.empty?(file, rank - 2)
     result
   end
 
@@ -146,6 +149,7 @@ class WhiteKnight < Knight
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2658"
   end
 end
 
@@ -153,6 +157,7 @@ class BlackKnight < Knight
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265E"
   end
 end
 
@@ -170,6 +175,7 @@ class WhiteBishop < Bishop
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2657"
   end
 end
 
@@ -177,10 +183,16 @@ class BlackBishop < Bishop
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265D"
   end
 end
 
 class Rook < Piece
+  attr_accessor :moved
+  def initialize(location)
+    @moved = false
+    super
+  end
   def possible_moves(board)
     straight_moves(board)
   end
@@ -193,6 +205,7 @@ class WhiteRook < Rook
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2656"
   end
 end
 
@@ -200,6 +213,7 @@ class BlackRook < Rook
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265C"
   end
 end
 
@@ -217,6 +231,7 @@ class WhiteQueen < Queen
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2655"
   end
 end
 
@@ -224,10 +239,18 @@ class BlackQueen < Queen
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265B"
   end
 end
 
 class King < Piece
+  attr_accessor :moved
+
+  def initialize(location)
+    @moved = false
+    super
+  end
+
   def possible_moves(board)
     file, rank = loc_to_coord(@location)
     result = []
@@ -261,6 +284,7 @@ class WhiteKing < King
   def initialize(location)
     super
     @color = 'W'
+    @ucode = "\u2654"
   end
 end
 
@@ -268,5 +292,6 @@ class BlackKing < King
   def initialize(location)
     super
     @color = 'B'
+    @ucode = "\u265A"
   end
 end

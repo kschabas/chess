@@ -240,6 +240,67 @@ describe Chess do
       end
     end
   end
+  describe 'castling' do
+    subject(:test_game) { described_class.new }
+    let(:test_king) { WhiteKing.new('e1')}
+    let(:test_rook) { WhiteRook.new('h1')}
+    before do
+      test_game.add_piece(test_king,'e1')
+      test_game.add_piece(test_rook,'h1')
+    end
+
+    it 'castles when legal' do
+      result = test_game.castle_move('O-O')
+      expect(result).to be true
+      expect(test_king.location).to eq('g1')
+      expect(test_rook.location).to eq('f1')
+    end
+
+    it 'does not castle if king has moved' do
+      test_game.execute_move(test_king, 'd1', false)
+      test_game.execute_move(test_king, 'e1', false)
+      result = test_game.castle_move('O-O')
+      expect(result).to be false
+      expect(test_king.location).to eq('e1')
+      expect(test_rook.location).to eq('h1')
+    end
+
+    it 'does not castle if rook not present' do
+      result = test_game.castle_move('O-O-O')
+      expect(result).to be false
+    end
+
+    it 'does not castle if obstruction' do
+      test_game.add_piece(WhiteBishop.new('f1'), 'f1')
+      result = test_game.castle_move('O-O')
+      expect(result).to be false
+    end
+
+    it 'does not castle if in check' do
+      test_game.add_piece(BlackRook.new('e8'), 'e8')
+      result = test_game.castle_move('O-O')
+      expect(result).to be false
+    end
+
+    it 'does not castle if it ends up in a check' do
+      test_game.add_piece(BlackKnight.new('h3'), 'h3')
+      result = test_game.castle_move('O-O')
+      expect(result).to be false
+    end
+
+    it 'does not castle if it passes through an attacked square' do
+      test_game.add_piece(BlackBishop.new('a6'), 'a6')
+      result = test_game.castle_move('O-O')
+      expect(result).to be false
+    end
+
+    it 'does not castle if attacking piece is block ' do
+      test_game.add_piece(BlackBishop.new('a6'), 'a6')
+      test_game.add_piece(WhitePawn.new('e2'), 'e2')
+      result = test_game.castle_move('O-O')
+      expect(result).to be true
+    end
+  end
 end
 
 describe WhitePawn do

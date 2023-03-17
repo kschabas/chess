@@ -9,4 +9,12 @@ module Location
   def coord_to_loc(file, rank)
     "#{(file + 'a'.ord).chr}#{(rank + '1'.ord).chr}"
   end
+
+  def enemy_color(color)
+    if color == 'W'
+      'B'
+    else
+      'W'
+    end
+  end
 end
