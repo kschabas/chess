@@ -250,7 +250,7 @@ describe Chess do
     end
 
     it 'castles when legal' do
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be true
       expect(test_king.location).to eq('g1')
       expect(test_rook.location).to eq('f1')
@@ -259,46 +259,57 @@ describe Chess do
     it 'does not castle if king has moved' do
       test_game.execute_move(test_king, 'd1', false)
       test_game.execute_move(test_king, 'e1', false)
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be false
       expect(test_king.location).to eq('e1')
       expect(test_rook.location).to eq('h1')
     end
 
     it 'does not castle if rook not present' do
-      result = test_game.castle_move('O-O-O')
+      result = test_game.castle_move('o-o-o')
       expect(result).to be false
     end
 
     it 'does not castle if obstruction' do
       test_game.add_piece(WhiteBishop.new('f1'), 'f1')
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be false
     end
 
     it 'does not castle if in check' do
       test_game.add_piece(BlackRook.new('e8'), 'e8')
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be false
     end
 
     it 'does not castle if it ends up in a check' do
       test_game.add_piece(BlackKnight.new('h3'), 'h3')
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be false
     end
 
     it 'does not castle if it passes through an attacked square' do
       test_game.add_piece(BlackBishop.new('a6'), 'a6')
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be false
     end
 
     it 'does not castle if attacking piece is block ' do
       test_game.add_piece(BlackBishop.new('a6'), 'a6')
       test_game.add_piece(WhitePawn.new('e2'), 'e2')
-      result = test_game.castle_move('O-O')
+      result = test_game.castle_move('o-o')
       expect(result).to be true
+    end
+  end
+  describe 'simulated game' do
+    subject(:test_game) { described_class.new }
+
+    it 'ends when supposed to' do
+      allow(test_game).to receive(:gets).and_return('pe4','pc5','nf3','pd6','pd4','pxd4','nxd4','nf6','nc3','pe6',\
+        'bc4','pa6','pa3','be7','ba2','pb5','be3','o-o','qf3','bb7','o-o-o','nbd7','qh3','rc8','pf3','rxc3','pxc3','pd5',\
+      'pxd5')
+      test_game.play_game
+      expect(test_game.checkmate?.to).to be true
     end
   end
 end

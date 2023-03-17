@@ -290,7 +290,7 @@ class Chess
   end
 
   def castle_move(input)
-    result = if input == 'O-O'
+    result = if input == 'o-o'
                king_side_castle
              else
                queen_side_castle
@@ -336,15 +336,17 @@ class Chess
     return false unless empty_space.all? { |loc| @board.empty?(loc_to_coord(loc)[0], loc_to_coord(loc)[1]) }
     return false unless empty_space.none? { |loc| is_space_attacked?(loc, enemy_color(@turn)) }
 
-    execute_move(king_piece, king_dest, false)
-    execute_move(rook_piece, rook_dest, false)
+    execute_move(king_piece, king_dest, false, false)
+    execute_move(rook_piece, rook_dest, false, false)
     if check?(enemy_color(@turn))
-      execute_move(king_piece, king_loc, false)
-      execute_move(rook_piece, rook_loc, false)
+      execute_move(king_piece, king_loc, false, false)
+      execute_move(rook_piece, rook_loc, false, false)
       king_piece.moved = false
       rook_piece.moved = false
       return false
     end
+    execute_move(king_piece, king_dest, false, true)
+    execute_move(rook_piece, rook_dest, false, true)
     true
   end
 
@@ -397,8 +399,7 @@ class Chess
   end
 
   def exposes_king?(start_piece, dest_loc, capture)
-    dest_file, dest_rank = loc_to_coord(dest_loc)
-    saved_piece = @board.grid[dest_file][dest_rank] if capture
+    saved_piece = get_piece_from_loc(dest_loc) if capture
     start_loc = start_piece.location
     king_piece = @piece_to_loc_hash.select { |_key, piece| piece.color == start_piece.color && piece.is_a?(King) }
     king_piece = king_piece.values[0]

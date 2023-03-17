@@ -71,7 +71,7 @@ class WhitePawn < Piece
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2659"
+    @ucode = "\u265F"
   end
 
   def possible_moves(board)
@@ -95,7 +95,7 @@ class BlackPawn < Piece
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265F"
+    @ucode = "\u2659"
   end
 
   def possible_moves(board)
@@ -149,7 +149,7 @@ class WhiteKnight < Knight
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2658"
+    @ucode = "\u265E"
   end
 end
 
@@ -157,7 +157,7 @@ class BlackKnight < Knight
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265E"
+    @ucode = "\u2658"
   end
 end
 
@@ -175,7 +175,7 @@ class WhiteBishop < Bishop
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2657"
+    @ucode = "\u265D"
   end
 end
 
@@ -183,7 +183,7 @@ class BlackBishop < Bishop
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265D"
+    @ucode = "\u2657"
   end
 end
 
@@ -205,7 +205,7 @@ class WhiteRook < Rook
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2656"
+    @ucode = "\u265C"
   end
 end
 
@@ -213,7 +213,7 @@ class BlackRook < Rook
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265C"
+    @ucode = "\u2656"
   end
 end
 
@@ -231,7 +231,7 @@ class WhiteQueen < Queen
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2655"
+    @ucode = "\u265B"
   end
 end
 
@@ -239,7 +239,7 @@ class BlackQueen < Queen
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265B"
+    @ucode = "\u2655"
   end
 end
 
@@ -284,7 +284,7 @@ class WhiteKing < King
   def initialize(location)
     super
     @color = 'W'
-    @ucode = "\u2654"
+    @ucode = "\u265A"
   end
 end
 
@@ -292,6 +292,6 @@ class BlackKing < King
   def initialize(location)
     super
     @color = 'B'
-    @ucode = "\u265A"
+    @ucode = "\u2654"
   end
 end
