@@ -307,9 +307,20 @@ describe Chess do
     it 'ends when supposed to' do
       allow(test_game).to receive(:gets).and_return('pe4','pc5','nf3','pd6','pd4','pxd4','nxd4','nf6','nc3','pe6',\
         'bc4','pa6','pa3','be7','ba2','pb5','be3','o-o','qf3','bb7','o-o-o','nbd7','qh3','rc8','pf3','rxc3','pxc3','pd5',\
-      'pxd5')
+      'pxd5', 'bxa3', 'kb1', 'bxd5', 'nb3', 'qc7', 'bd2', 'rc8', 'rhe1', 'nb6', 'qh4', 'na4', 'qd4', 'bb2', \
+      'qe5', 'qc6', 'nd4', 'bxa2', 'kxa2', 'qc4', 'kb1', 'bxc3', 'bxc3', 'qxc3', 'kc1', 'nb6', 're3', 'qa1', \
+      'kd2', 'nc4', 'ke2', 'qb2', 'qg3', 'nxe3', 'kxe3', 'pb4', 'qd6', 'ph6', 'qxa6', 'rc3', 'rd3', 'pb3',\
+      'nxb3', 'nd5', 'ke4', 'rxc2', 'qa8', 'kh7', 'nd4', 're2', 'nxe2', 'pf5')
       test_game.play_game
-      expect(test_game.checkmate?.to).to be true
+      expect(test_game.checkmate?).to be true
+    end
+  end
+  describe 'load_game' do
+    subject(:test_game) { described_class.new }
+
+    it 'loads a game correctly' do
+      allow(test_game).to receive(:gets).and_return('karl_json_test')
+      test_game.load_game
     end
   end
 end

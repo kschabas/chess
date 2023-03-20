@@ -1,10 +1,11 @@
-#frozen_string_literal: true
+# frozen_string_literal: true
 
-#Board class
+# Board class
 class Board
   include Location
   DIM = 8
   attr_accessor :grid
+
   def initialize
     @grid = Array.new(DIM) { Array.new(DIM, nil) }
   end
@@ -14,11 +15,11 @@ class Board
   end
 
   def empty?(file, rank)
-    return @grid[rank][file].nil?
+    @grid[rank][file].nil?
   end
 
   def valid_square?(file, rank)
-    return file.between?(0, DIM - 1) && rank.between?(0, DIM - 1)
+    file.between?(0, DIM - 1) && rank.between?(0, DIM - 1)
   end
 
   def valid_and_empty?(file, rank)
@@ -32,6 +33,7 @@ class Board
   def enemy_piece?(file, rank, color)
     return false if @grid[rank][file].nil?
     return false if @grid[rank][file].color == color
+
     true
   end
 

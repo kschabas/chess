@@ -4,6 +4,7 @@ require './lib/piece'
 require './lib/location'
 require './lib/board'
 require 'colorize'
+require 'json'
 
 # Main Chess game class
 class Chess
@@ -34,7 +35,7 @@ class Chess
       create_rook('W', 'a1')
       create_rook('W', 'h1')
     else
-      create_rook( 'B', 'a8')
+      create_rook('B', 'a8')
       create_rook('B', 'h8')
     end
   end
@@ -113,47 +114,47 @@ class Chess
   end
 
   def create_rook(color, loc)
-    if (color == 'W')
-      piece = WhiteRook.new(loc)
-    else
-      piece = BlackRook.new(loc)
-    end
+    piece = if color == 'W'
+              WhiteRook.new(loc)
+            else
+              BlackRook.new(loc)
+            end
     add_piece(piece, loc)
   end
 
   def create_knight(color, loc)
-    if (color == 'W')
-      piece = WhiteKnight.new(loc)
-    else
-      piece = BlackKnight.new(loc)
-    end
+    piece = if color == 'W'
+              WhiteKnight.new(loc)
+            else
+              BlackKnight.new(loc)
+            end
     add_piece(piece, loc)
   end
 
   def create_bishop(color, loc)
-    if (color == 'W')
-      piece = WhiteBishop.new(loc)
-    else
-      piece = BlackBishop.new(loc)
-    end
+    piece = if color == 'W'
+              WhiteBishop.new(loc)
+            else
+              BlackBishop.new(loc)
+            end
     add_piece(piece, loc)
   end
 
   def create_queen(color, loc)
-    if (color == 'W')
-      piece = WhiteQueen.new(loc)
-    else
-      piece = BlackQueen.new(loc)
-    end
+    piece = if color == 'W'
+              WhiteQueen.new(loc)
+            else
+              BlackQueen.new(loc)
+            end
     add_piece(piece, loc)
   end
 
   def create_king(color, loc)
-    if (color == 'W')
-      piece = WhiteKing.new(loc)
-    else
-      piece = BlackKing.new(loc)
-    end
+    piece = if color == 'W'
+              WhiteKing.new(loc)
+            else
+              BlackKing.new(loc)
+            end
     add_piece(piece, loc)
   end
 
@@ -173,7 +174,7 @@ class Chess
   end
 
   def print_winner_message
-    color = (@turn == 'W') ? 'White' : 'Black'
+    color = @turn == 'W' ? 'White' : 'Black'
     puts "Checkmate!! #{color} wins!!!"
   end
 
@@ -186,7 +187,7 @@ class Chess
   end
 
   def print_row(row, odd)
-    row.each_with_index do |square, index| 
+    row.each_with_index do |square, index|
       if (!odd && index.even?) || (odd && index.odd?)
         print_square(square, true)
       else
@@ -227,7 +228,8 @@ class Chess
   def check?(color = @turn)
     enemy_king = @piece_to_loc_hash.reject { |_key, piece| piece.color == color || !piece.is_a?(King) }
     enemy_king_loc = enemy_king.keys[0].to_s
-    possible_king_attackers = @piece_to_loc_hash.select { |_key, piece| piece.color == color && piece.valid_move?(enemy_king_loc, true, @board)}
+    possible_king_attackers = @piece_to_loc_hash.select { |_key, piece| \
+      piece.color == color && piece.valid_move?(enemy_king_loc, true, @board)}
     possible_king_attackers.size.positive? ? true : false
   end
 
@@ -276,16 +278,16 @@ class Chess
   end
 
   def print_no_start_piece_error(input)
-    puts 'Unable to find a piece of the given type that can move to the desired location. Please try again'
+    puts "Unable to find a piece of the given type that can move to the desired location for move #{input}. Please try again"
     false
   end
 
-  def print_ambigous_start_piece_error(input)
+  def print_ambigous_start_piece_error(_input)
     puts 'Found more than one piece of the desired type that can move to the given location. Please be more specific.'
     false
   end
 
-  def print_exposes_king_error(input)
+  def print_exposes_king_error(_input)
     puts 'That move is illegal as it allows your king to be captured. Please try again'
   end
 
@@ -300,7 +302,7 @@ class Chess
   end
 
   def print_castling_error
-    puts "Castling is illegal in this situation. Please try again!"
+    puts 'Castling is illegal in this situation. Please try again!'
   end
 
   def king_side_castle
@@ -367,8 +369,58 @@ class Chess
     execute_castle(king_loc, rook_loc, empty_space, king_dest, rook_dest)
   end
 
+  def user_saved_file_name
+    puts 'Please enter a name for your saved game'
+    gets.downcase.chomp
+  end
+
+  def user_game_to_load
+    puts 'Please enter the name of the saved game to load'
+    gets.downcase.chomp
+  end
+
+  def save_game
+    file_name = user_saved_file_name
+    file = File.open("./saved_games/#{file_name}.json", 'w')
+    file.puts JSON.dump({
+                          turn: @turn,
+                          piece_to_loc_hash: @piece_to_loc_hash
+                        })
+    puts "#{file_name}.json succesfully saved!"
+    file.close
+    false
+  end
+
+  def load_game
+    file_name = user_game_to_load
+    until File.exist?("./saved_games/#{file_name}.json")
+      puts "File doesn't exist. Please re-enter the saved game name"
+      file_name = user_game_to_load
+    end
+    puts 'Game succesfully loaded!'
+    file = File.open("./saved_games/#{file_name}.json", 'r')
+    @board.clear_board
+    @piece_to_loc_hash.clear
+    data = file.read
+    data = JSON.parse data
+    @turn = data['turn']
+    pieces_list = data['piece_to_loc_hash']
+    load_pieces_hash_and_board(pieces_list)
+    print_board
+    false
+  end
+
+  def load_pieces_hash_and_board(list)
+    list.each do |loc, piece_hash|
+      piece = Module.const_get(piece_hash['type']).new
+      add_piece(piece, loc)
+      piece.moved = piece_hash['moved'] if piece.moved_parameter?
+    end
+  end
+
   def parse_and_execute_user_input(input)
     return save_game if input == 'save'
+    return load_game if input == 'load'
 
     castle_moves = ['o-o-o', 'o-o']
     return castle_move(input) if castle_moves.include?(input)

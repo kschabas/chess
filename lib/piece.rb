@@ -1,13 +1,14 @@
 # frozen_string_literal: true
 
 require './lib/location'
+require 'json'
 
 # class to implement chess pieces
 class Piece
   include Location
   attr_accessor :location, :color, :name, :ucode
 
-  def initialize(location)
+  def initialize(location = nil)
     @location = location
   end
 
@@ -65,10 +66,20 @@ class Piece
     end
     []
   end
+
+  def to_json(*)
+    JSON.dump({
+                type: self.class
+              })
+  end
+
+  def moved_parameter?
+    is_a?(King) || is_a?(Rook)
+  end
 end
 
 class WhitePawn < Piece
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265F"
@@ -92,7 +103,7 @@ class WhitePawn < Piece
 end
 
 class BlackPawn < Piece
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2659"
@@ -146,7 +157,7 @@ class Knight < Piece
 end
 
 class WhiteKnight < Knight
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265E"
@@ -154,7 +165,7 @@ class WhiteKnight < Knight
 end
 
 class BlackKnight < Knight
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2658"
@@ -172,7 +183,7 @@ class Bishop < Piece
 end
 
 class WhiteBishop < Bishop
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265D"
@@ -180,7 +191,7 @@ class WhiteBishop < Bishop
 end
 
 class BlackBishop < Bishop
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2657"
@@ -189,20 +200,29 @@ end
 
 class Rook < Piece
   attr_accessor :moved
-  def initialize(location)
+  def initialize(location = nil)
     @moved = false
     super
   end
+
   def possible_moves(board)
     straight_moves(board)
   end
+
   def possible_captures(board)
     straight_captures(board)
+  end
+
+  def to_json(*)
+    JSON.dump({
+                type: self.class,
+                moved: @moved
+              })
   end
 end
 
 class WhiteRook < Rook
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265C"
@@ -210,7 +230,7 @@ class WhiteRook < Rook
 end
 
 class BlackRook < Rook
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2656"
@@ -228,7 +248,7 @@ class Queen < Piece
 end
 
 class WhiteQueen < Queen
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265B"
@@ -236,7 +256,7 @@ class WhiteQueen < Queen
 end
 
 class BlackQueen < Queen
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2655"
@@ -246,7 +266,7 @@ end
 class King < Piece
   attr_accessor :moved
 
-  def initialize(location)
+  def initialize(location = nil)
     @moved = false
     super
   end
@@ -278,10 +298,17 @@ class King < Piece
     result << coord_to_loc(file + 1, rank + 1) if board.valid_and_enemy?(file + 1, rank + 1, @color)
     result
   end
+
+  def to_json(*)
+    JSON.dump({
+                type: self.class,
+                moved: @moved
+              })
+  end
 end
 
 class WhiteKing < King
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'W'
     @ucode = "\u265A"
@@ -289,7 +316,7 @@ class WhiteKing < King
 end
 
 class BlackKing < King
-  def initialize(location)
+  def initialize(location = nil)
     super
     @color = 'B'
     @ucode = "\u2654"
