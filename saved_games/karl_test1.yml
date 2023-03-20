@@ -1,0 +1,203 @@
+---
+:board: !ruby/object:Board
+  grid:
+  - - &8 !ruby/object:WhiteRook
+      moved: false
+      location: a1
+      color: W
+      ucode: "♜"
+    - &10 !ruby/object:WhiteKnight
+      location: b1
+      color: W
+      ucode: "♞"
+    - &12 !ruby/object:WhiteBishop
+      location: c1
+      color: W
+      ucode: "♝"
+    - &14 !ruby/object:WhiteQueen
+      location: d1
+      color: W
+      ucode: "♛"
+    - &15 !ruby/object:WhiteKing
+      moved: false
+      location: e1
+      color: W
+      ucode: "♚"
+    - &13 !ruby/object:WhiteBishop
+      location: f1
+      color: W
+      ucode: "♝"
+    - &11 !ruby/object:WhiteKnight
+      location: g1
+      color: W
+      ucode: "♞"
+    - &9 !ruby/object:WhiteRook
+      moved: false
+      location: h1
+      color: W
+      ucode: "♜"
+  - - &1 !ruby/object:WhitePawn
+      location: a2
+      color: W
+      ucode: "♟"
+    - &2 !ruby/object:WhitePawn
+      location: b2
+      color: W
+      ucode: "♟"
+    - &3 !ruby/object:WhitePawn
+      location: c2
+      color: W
+      ucode: "♟"
+    - &4 !ruby/object:WhitePawn
+      location: d2
+      color: W
+      ucode: "♟"
+    -
+    - &5 !ruby/object:WhitePawn
+      location: f2
+      color: W
+      ucode: "♟"
+    - &6 !ruby/object:WhitePawn
+      location: g2
+      color: W
+      ucode: "♟"
+    - &7 !ruby/object:WhitePawn
+      location: h2
+      color: W
+      ucode: "♟"
+  - -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+  - -
+    -
+    -
+    -
+    - &31 !ruby/object:WhitePawn
+      location: e4
+      color: W
+      ucode: "♟"
+    -
+    -
+    -
+  - -
+    -
+    -
+    -
+    - &32 !ruby/object:BlackPawn
+      location: e5
+      color: B
+      ucode: "♙"
+    -
+    -
+    -
+  - -
+    -
+    -
+    -
+    -
+    -
+    -
+    -
+  - - &16 !ruby/object:BlackPawn
+      location: a7
+      color: B
+      ucode: "♙"
+    - &17 !ruby/object:BlackPawn
+      location: b7
+      color: B
+      ucode: "♙"
+    - &18 !ruby/object:BlackPawn
+      location: c7
+      color: B
+      ucode: "♙"
+    - &19 !ruby/object:BlackPawn
+      location: d7
+      color: B
+      ucode: "♙"
+    -
+    - &20 !ruby/object:BlackPawn
+      location: f7
+      color: B
+      ucode: "♙"
+    - &21 !ruby/object:BlackPawn
+      location: g7
+      color: B
+      ucode: "♙"
+    - &22 !ruby/object:BlackPawn
+      location: h7
+      color: B
+      ucode: "♙"
+  - - &23 !ruby/object:BlackRook
+      moved: false
+      location: a8
+      color: B
+      ucode: "♖"
+    - &25 !ruby/object:BlackKnight
+      location: b8
+      color: B
+      ucode: "♘"
+    - &27 !ruby/object:BlackBishop
+      location: c8
+      color: B
+      ucode: "♗"
+    - &29 !ruby/object:BlackQueen
+      location: d8
+      color: B
+      ucode: "♕"
+    - &30 !ruby/object:BlackKing
+      moved: false
+      location: e8
+      color: B
+      ucode: "♔"
+    - &28 !ruby/object:BlackBishop
+      location: f8
+      color: B
+      ucode: "♗"
+    - &26 !ruby/object:BlackKnight
+      location: g8
+      color: B
+      ucode: "♘"
+    - &24 !ruby/object:BlackRook
+      moved: false
+      location: h8
+      color: B
+      ucode: "♖"
+:turn: W
+:piece_to_loc_hash:
+  :a2: *1
+  :b2: *2
+  :c2: *3
+  :d2: *4
+  :f2: *5
+  :g2: *6
+  :h2: *7
+  :a1: *8
+  :h1: *9
+  :b1: *10
+  :g1: *11
+  :c1: *12
+  :f1: *13
+  :d1: *14
+  :e1: *15
+  :a7: *16
+  :b7: *17
+  :c7: *18
+  :d7: *19
+  :f7: *20
+  :g7: *21
+  :h7: *22
+  :a8: *23
+  :h8: *24
+  :b8: *25
+  :g8: *26
+  :c8: *27
+  :f8: *28
+  :d8: *29
+  :e8: *30
+  :e4: *31
+  :e5: *32

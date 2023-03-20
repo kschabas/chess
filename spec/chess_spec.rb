@@ -311,6 +311,7 @@ describe Chess do
       'qe5', 'qc6', 'nd4', 'bxa2', 'kxa2', 'qc4', 'kb1', 'bxc3', 'bxc3', 'qxc3', 'kc1', 'nb6', 're3', 'qa1', \
       'kd2', 'nc4', 'ke2', 'qb2', 'qg3', 'nxe3', 'kxe3', 'pb4', 'qd6', 'ph6', 'qxa6', 'rc3', 'rd3', 'pb3',\
       'nxb3', 'nd5', 'ke4', 'rxc2', 'qa8', 'kh7', 'nd4', 're2', 'nxe2', 'pf5')
+      # expect(test_game).to receive(:parse_and_execute_user_input).exactly(80).times
       test_game.play_game
       expect(test_game.checkmate?).to be true
     end
@@ -321,6 +322,30 @@ describe Chess do
     it 'loads a game correctly' do
       allow(test_game).to receive(:gets).and_return('karl_json_test')
       test_game.load_game
+    end
+  end
+  describe 'promote pawn' do
+    subject(:test_game) { described_class.new }
+
+    before do
+      test_game.add_piece(WhitePawn.new, 'e7')
+      test_game.add_piece(BlackPawn.new, 'f7')
+      test_game.add_piece(BlackPawn.new, 'g7')
+      test_game.add_piece(BlackPawn.new, 'h7')
+      test_game.add_piece(BlackKing.new, 'g8')
+      test_game.add_piece(WhiteKing.new, 'e1')
+    end
+
+    it 'creates a queen' do
+      allow(test_game).to receive(:gets).and_return("q\n")
+      test_game.parse_and_execute_user_input('pe8')
+      expect(test_game.checkmate?).to be true
+    end
+
+    it 'creates a knight' do
+      allow(test_game).to receive(:gets).and_return("n\n")
+      test_game.parse_and_execute_user_input('pe8')
+      expect(test_game.checkmate?).to be false
     end
   end
 end

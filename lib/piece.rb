@@ -12,6 +12,10 @@ class Piece
     @location = location
   end
 
+  def promote?
+    false
+  end
+
   def valid_move?(dest_loc, capture, board)
     if capture
       possible_captures(board).include?(dest_loc)
@@ -100,6 +104,11 @@ class WhitePawn < Piece
     result << coord_to_loc(file + 1, rank + 1) if board.valid_and_enemy?(file + 1, rank + 1, @color)
     result
   end
+
+  def promote?
+    _file, rank = loc_to_coord(@location)
+    rank == 7
+  end
 end
 
 class BlackPawn < Piece
@@ -107,6 +116,11 @@ class BlackPawn < Piece
     super
     @color = 'B'
     @ucode = "\u2659"
+  end
+
+  def promote?
+    _file, rank = loc_to_coord(@location)
+    rank == 0
   end
 
   def possible_moves(board)

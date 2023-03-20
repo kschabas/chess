@@ -437,7 +437,21 @@ class Chess
     start_piece = start_piece.values[0]
     return print_exposes_king_error(input) if exposes_king?(start_piece, dest_loc, capture)
 
-    execute_move(start_piece, dest_loc, capture, true)
+    result = execute_move(start_piece, dest_loc, capture, true)
+    promote_pawn(start_piece) if start_piece.promote?
+    result
+  end
+
+  def promote_pawn(piece)
+    piece_type = letter_to_type(user_promotion_input, @turn)
+    new_piece = piece_type.new(piece.location)
+    remove_piece(piece.location)
+    add_piece(new_piece, new_piece.location)
+  end
+
+  def user_promotion_input
+    puts 'Your pawn has been promoted! What piece would you like it to become (Q/R/N/B)?'
+    gets.downcase.chomp
   end
 
   def execute_move(start_piece, dest_loc, capture, permanent = true)
